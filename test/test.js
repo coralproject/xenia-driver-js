@@ -1,0 +1,45 @@
+
+require('babel-register')
+var xeniaDriver = require('../src')
+var auth = require('./keys.json')
+var assert = require('assert')
+
+describe('Xenia Driver', function() {
+
+   describe('Constructor', function() {
+      it('should return a new Xenia Driver instance', function(){
+         const xen = xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+         assert(xen._baseURL === 'https://demo.coralproject.net/xenia_api/1.0')
+         assert(xen._auth.username === auth.username && xen._auth.password === auth.password)
+         assert('object' === typeof xen._request)
+         assert('object' === typeof xen._data)
+      })
+   })
+
+   describe('limit', function() {
+      it('should add a limit command', function() {
+         const x = xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+         x.limit(15)
+         assert(x._commands[0].$limit === 15)
+      })
+
+      it('should default to 20', function() {
+         const x = xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+         x.limit()
+         assert(x._commands[0].$limit === 20)
+      })
+   })
+
+   describe('exec', function() {
+      it('should execute a query to xenia', function(done) {
+         xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+           .sample(24)
+           .limit(15)
+           .skip(1)
+         .exec().then(res => {
+            assert(res.data.results.length)
+            done()
+         })
+      })
+   })
+})
