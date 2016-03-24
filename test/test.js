@@ -42,4 +42,17 @@ describe('Xenia Driver', function() {
          })
       })
    })
+
+   describe('join', function() {
+      it('should save the query and create a new one matching the field', function() {
+         const x = xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+            .sample(10)
+            .join('user_search', 'avatar')
+            ._commitQuery() // just not to do exec for adding the second query
+
+         assert(x._data.queries.length === 2)
+         assert(x._data.queries[1].commands.length === 1)
+         assert(x._data.queries[1].commands[0].$match.avatar.$in === '#data.*:list.avatar')
+      })
+   })
 })

@@ -71,8 +71,6 @@ module.exports =
 	var dataSchema = {
 	  name: 'my_query',
 	  desc: 'made with xenia driver',
-	  params: [],
-	  queries: [],
 	  enabled: true
 	};
 
@@ -80,7 +78,6 @@ module.exports =
 	  name: 'my_query',
 	  type: 'pipeline',
 	  collection: 'user_statistics',
-	  commands: [],
 	  return: true
 	};
 
@@ -125,7 +122,7 @@ module.exports =
 	    });
 
 	    // Initialize the query
-	    this._data = Object.assign({}, dataSchema);
+	    this._data = Object.assign({}, dataSchema, { params: [], queries: [] });
 	    this.addQuery(params);
 
 	    return this;
@@ -143,7 +140,7 @@ module.exports =
 	        this._query.commands = this._commands;
 	        this._data.queries.push(this._query);
 	      }
-
+	      this._query = null;
 	      return this;
 	    }
 
@@ -157,8 +154,9 @@ module.exports =
 	    value: function addQuery() {
 	      var queryData = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
+	      var rand = Math.floor(Math.random() * 9999);
 	      this._commitQuery();
-	      this._query = Object.assign({}, querySchema, queryData);
+	      this._query = Object.assign({}, querySchema, queryData, { name: 'my_query_' + rand, commands: [] });
 	      this._commands = [];
 
 	      return this;
@@ -354,6 +352,25 @@ module.exports =
 	      } else {
 	        this._commands.push({ '$sort': order });
 	      }
+	      return this;
+	    }
+
+	    /**
+	     * Creates a new query joining the actual one using the save method
+	     * from Xenia
+	     * @param {string} collection
+	     * @param {string} field - default: _id
+	     * @param {sting} join parameter name - default: 'list'
+	     */
+
+	  }, {
+	    key: 'join',
+	    value: function join(collection) {
+	      var field = arguments.length <= 1 || arguments[1] === undefined ? '_id' : arguments[1];
+	      var name = arguments.length <= 2 || arguments[2] === undefined ? 'list' : arguments[2];
+
+	      this._commands.push({ '$save': { '$map': name } });
+	      this.addQuery().collection(collection).match(_defineProperty({}, field, { '$in': '#data.*:' + name + '.' + field }));
 	      return this;
 	    }
 	  }]);

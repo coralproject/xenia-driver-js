@@ -12,8 +12,6 @@ import axios from 'axios'
  const dataSchema = {
   name: 'my_query',
   desc: 'made with xenia driver',
-  params: [],
-  queries: [],
   enabled: true
 }
 
@@ -21,7 +19,6 @@ const querySchema = {
   name: 'my_query',
   type: 'pipeline',
   collection: 'user_statistics',
-  commands: [],
   return: true
 }
 
@@ -61,7 +58,7 @@ class XeniaDriver {
     });
 
     // Initialize the query
-    this._data = Object.assign({}, dataSchema)
+    this._data = Object.assign({}, dataSchema, {params: [], queries: []})
     this.addQuery(params)
 
     return this
@@ -77,7 +74,7 @@ class XeniaDriver {
       this._query.commands = this._commands
       this._data.queries.push(this._query)
     }
-
+    this._query = null
     return this
   }
 
@@ -87,8 +84,9 @@ class XeniaDriver {
    */
 
   addQuery (queryData = {}) {
+    const rand = Math.floor(Math.random() * 9999)
     this._commitQuery()
-    this._query = Object.assign({}, querySchema, queryData)
+    this._query = Object.assign({}, querySchema, queryData, {name: 'my_query_' + rand, commands: []})
     this._commands = []
 
     return this
@@ -229,6 +227,21 @@ class XeniaDriver {
     } else {
       this._commands.push({ '$sort': order })
     }
+    return this
+  }
+
+  /**
+   * Creates a new query joining the actual one using the save method
+   * from Xenia
+   * @param {string} collection
+   * @param {string} field - default: _id
+   * @param {sting} join parameter name - default: 'list'
+   */
+
+  join ( collection, field = '_id', name = 'list' ) {
+    this._commands.push({ '$save': { '$map': name } })
+    this.addQuery().collection(collection)
+      .match({ [field]: { '$in': `#data.*:${name}.${field}`} })
     return this
   }
 
