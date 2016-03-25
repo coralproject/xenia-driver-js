@@ -34,10 +34,11 @@ class XeniaDriver {
    * @constructor
    * @param {string} base url - Xenia base url
    * @param {object} Auth - Xenia basic authentication credentials
-   *   @param {}
-   * @param {object} parameters - Query parameters; optional
+   * @param {object} parameters - extra parameters; optional
+   * @param {object} request parameters - overrides extra parameters; optional
+
    */
-  constructor(baseURL, auth, params={}) {
+  constructor(baseURL, auth, params = {}, reqParams = {}) {
     if ('string' !== typeof baseURL) {
       throw new Error('A base url is needed for the Xenia Driver to work.')
     }
@@ -58,7 +59,8 @@ class XeniaDriver {
     });
 
     // Initialize the query
-    this._data = Object.assign({}, dataSchema, {params: [], queries: []})
+    this._data = Object.assign({}, dataSchema, {params: [], queries: []},
+      params.defaults, reqParams)
     this.addQuery(params)
 
     return this
@@ -266,7 +268,7 @@ class XeniaDriver {
  */
 
  module.exports = function (url, auth, params) {
-   return () => {
-     return new XeniaDriver(url, auth, params)
+   return (reqParams) => {
+     return new XeniaDriver(url, auth, params, reqParams)
    }
  }

@@ -93,12 +93,13 @@ module.exports =
 	   * @constructor
 	   * @param {string} base url - Xenia base url
 	   * @param {object} Auth - Xenia basic authentication credentials
-	   *   @param {}
-	   * @param {object} parameters - Query parameters; optional
-	   */
+	   * @param {object} parameters - extra parameters; optional
+	   * @param {object} request parameters - overrides extra parameters; optional
+	    */
 
 	  function XeniaDriver(baseURL, auth) {
 	    var params = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+	    var reqParams = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
 
 	    _classCallCheck(this, XeniaDriver);
 
@@ -122,7 +123,7 @@ module.exports =
 	    });
 
 	    // Initialize the query
-	    this._data = Object.assign({}, dataSchema, { params: [], queries: [] });
+	    this._data = Object.assign({}, dataSchema, { params: [], queries: [] }, params.defaults, reqParams);
 	    this.addQuery(params);
 
 	    return this;
@@ -398,8 +399,8 @@ module.exports =
 	 */
 
 	module.exports = function (url, auth, params) {
-	  return function () {
-	    return new XeniaDriver(url, auth, params);
+	  return function (reqParams) {
+	    return new XeniaDriver(url, auth, params, reqParams);
 	  };
 	};
 
