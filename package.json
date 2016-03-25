@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "mocha",
-    "start": "webpack --watch"
+    "start": "webpack --watch",
+    "build": "webpack"
   },
   "keywords": [],
   "author": "",

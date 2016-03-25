@@ -106,10 +106,22 @@ class XeniaDriver {
    * @param {object} query data - optional
    */
 
-   exec () {
-     this._commitQuery()
-     return this._request.post('/exec', this._data)
-   }
+  exec () {
+    this._commitQuery()
+    return this._request.post('/exec', this._data)
+  }
+
+  /**
+   * Save a query into xenia instead of executing it
+   */
+
+  saveQuery ( name ) {
+    if ( name ) {
+      this._data.name = name
+    }
+
+    return this._request.put('/query', this._data)
+  }
 
   /**
    * Limit the amount of retrieved documents
@@ -245,6 +257,7 @@ class XeniaDriver {
     return this
   }
 
+
 }
 
 /**
@@ -254,6 +267,6 @@ class XeniaDriver {
 
  module.exports = function (url, auth, params) {
    return () => {
-     return new XeniaDriver(url, auth, params)     
+     return new XeniaDriver(url, auth, params)
    }
  }

@@ -189,6 +189,20 @@ module.exports =
 	    }
 
 	    /**
+	     * Save a query into xenia instead of executing it
+	     */
+
+	  }, {
+	    key: 'saveQuery',
+	    value: function saveQuery(name) {
+	      if (name) {
+	        this._data.name = name;
+	      }
+
+	      return this._request.put('/query', this._data);
+	    }
+
+	    /**
 	     * Limit the amount of retrieved documents
 	     * @param {number} limit - default: 20
 	     */
