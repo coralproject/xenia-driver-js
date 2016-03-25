@@ -11,7 +11,8 @@ Perform queries to [xenia](https://github.com/coralproject/xenia) from the brows
 
     import XeniaDriver from 'xenia-driver'
 
-    xeniaDriver(baseUrl, {username: 'user', password: 'pass'})
+    const xenia = (baseUrl, {username: 'user', password: 'pass'})
+    xenia()
       .match({ 'category': 'sports' })
       .include(['comments', 'name'])
       .limit(14)

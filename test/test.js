@@ -4,11 +4,13 @@ var xeniaDriver = require('../src')
 var auth = require('./keys.json')
 var assert = require('assert')
 
+const xenia = xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+
 describe('Xenia Driver', function() {
 
    describe('Constructor', function() {
       it('should return a new Xenia Driver instance', function(){
-         const xen = xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+         const xen = xenia('https://demo.coralproject.net/xenia_api/1.0', auth)
          assert(xen._baseURL === 'https://demo.coralproject.net/xenia_api/1.0')
          assert(xen._auth.username === auth.username && xen._auth.password === auth.password)
          assert('object' === typeof xen._request)
@@ -18,13 +20,13 @@ describe('Xenia Driver', function() {
 
    describe('limit', function() {
       it('should add a limit command', function() {
-         const x = xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+         const x = xenia()
          x.limit(15)
          assert(x._commands[0].$limit === 15)
       })
 
       it('should default to 20', function() {
-         const x = xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+         const x = xenia()
          x.limit()
          assert(x._commands[0].$limit === 20)
       })
@@ -32,7 +34,7 @@ describe('Xenia Driver', function() {
 
    describe('exec', function() {
       it('should execute a query to xenia', function(done) {
-         xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+         xenia()
            .sample(24)
            .limit(15)
            .skip(1)
@@ -45,7 +47,7 @@ describe('Xenia Driver', function() {
 
    describe('join', function() {
       it('should save the query and create a new one matching the field', function() {
-         const x = xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+         const x = xenia()
             .sample(10)
             .join('user_search', 'avatar')
             ._commitQuery() // just not to do exec for adding the second query

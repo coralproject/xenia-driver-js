@@ -384,7 +384,9 @@ module.exports =
 	 */
 
 	module.exports = function (url, auth, params) {
-	  return new XeniaDriver(url, auth, params);
+	  return function () {
+	    return new XeniaDriver(url, auth, params);
+	  };
 	};
 
 /***/ },

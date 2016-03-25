@@ -253,5 +253,7 @@ class XeniaDriver {
  */
 
  module.exports = function (url, auth, params) {
-   return new XeniaDriver(url, auth, params)
+   return () => {
+     return new XeniaDriver(url, auth, params)     
+   }
  }
