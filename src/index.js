@@ -33,7 +33,7 @@ class XeniaDriver {
    * Initialize the driver
    * @constructor
    * @param {string} base url - Xenia base url
-   * @param {object} Auth - Xenia basic authentication credentials
+   * @param {object | string} Auth - Xenia basic authentication credentials
    * @param {object} parameters - extra parameters; optional
    * @param {object} request parameters - overrides extra parameters; optional
 
@@ -43,18 +43,25 @@ class XeniaDriver {
       throw new Error('A base url is needed for the Xenia Driver to work.')
     }
 
-    if ('object' !== typeof auth) {
-      throw new Error('An authorization object ({username, password}) is needed for the Xenia Driver to work.')
+    if ('object' !== typeof auth && 'string' !== typeof auth) {
+      throw new Error('An authorization object ({username, password}) or a Basic Authentication string is needed for the Xenia Driver to work.')
     }
 
     this._baseURL = baseURL
     this._auth = auth
     this._params = params
+    let headers = {}
+
+    if (typeof auth === 'string') {
+      headers.Authorization = auth
+      auth = null 
+    }
 
     // Initialize the request instance
     this._request = axios.create({
       baseURL,
       auth,
+      headers,
       timeout: 10000
     });
 
