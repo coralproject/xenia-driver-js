@@ -9,7 +9,7 @@ import axios from 'axios'
  * Module constants
  */
 
- const dataSchema = {
+const dataSchema = {
   name: 'my_query',
   desc: 'made with xenia driver',
   enabled: true
@@ -112,12 +112,17 @@ class XeniaDriver {
 
   /**
    * Executes the request
-   * @param {object} query data - optional
+   * @param {string} query name - optional
+   * @param {object} query parameters - optional
    */
 
-  exec () {
-    this._commitQuery()
-    return this._request.post('/exec', this._data)
+  exec (queryName, params={}) {
+    if ('string' === typeof queryName) {
+      this._commitQuery()
+      return this._request.post('/exec', this._data)
+    } else {
+      return this._request.get(`/exec/${queryName}`, params)
+    }
   }
 
   /**

@@ -186,14 +186,21 @@ module.exports =
 
 	    /**
 	     * Executes the request
-	     * @param {object} query data - optional
+	     * @param {string} query name - optional
+	     * @param {object} query parameters - optional
 	     */
 
 	  }, {
 	    key: 'exec',
-	    value: function exec() {
-	      this._commitQuery();
-	      return this._request.post('/exec', this._data);
+	    value: function exec(queryName) {
+	      var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	      if ('string' === typeof queryName) {
+	        this._commitQuery();
+	        return this._request.post('/exec', this._data);
+	      } else {
+	        return this._request.get('/exec/' + queryName, params);
+	      }
 	    }
 
 	    /**
