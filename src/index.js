@@ -128,6 +128,23 @@ class XeniaDriver {
   }
 
   /**
+   * Get a list of available queries
+   */
+
+  getQueries () {
+    return this._request.get('/query').then(res => res.data)
+  }
+
+  /**
+   * Get a specific queryset document
+   * @param {string} query name
+   */
+
+  getQuery ( name ) {
+    return this._request.get(`/query/${name}`).then(res => res.data)
+  }
+
+  /**
    * Save a query into xenia instead of executing it
    */
 

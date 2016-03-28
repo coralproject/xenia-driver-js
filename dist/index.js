@@ -208,6 +208,31 @@ module.exports =
 	    }
 
 	    /**
+	     * Get a list of available queries
+	     */
+
+	  }, {
+	    key: 'getQueries',
+	    value: function getQueries() {
+	      return this._request.get('/query').then(function (res) {
+	        return res.data;
+	      });
+	    }
+
+	    /**
+	     * Get a specific queryset document
+	     * @param {string} query name
+	     */
+
+	  }, {
+	    key: 'getQuery',
+	    value: function getQuery(name) {
+	      return this._request.get('/query/' + name).then(function (res) {
+	        return res.data;
+	      });
+	    }
+
+	    /**
 	     * Save a query into xenia instead of executing it
 	     */
 
