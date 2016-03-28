@@ -38,7 +38,7 @@ class XeniaDriver {
    * @param {object} request parameters - overrides extra parameters; optional
 
    */
-  constructor(baseURL, auth, params = {}, reqParams = {}) {
+  constructor(baseURL, auth, params = {}, reqParams) {
     if ('string' !== typeof baseURL) {
       throw new Error('A base url is needed for the Xenia Driver to work.')
     }
@@ -68,7 +68,10 @@ class XeniaDriver {
     // Initialize the query
     this._data = Object.assign({}, dataSchema, {params: [], queries: []},
       params.defaults, reqParams)
-    this.addQuery(params)
+
+    if (!reqParams) {
+      this.addQuery(params)
+    }
 
     return this
   }

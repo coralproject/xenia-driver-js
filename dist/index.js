@@ -99,7 +99,7 @@ module.exports =
 
 	  function XeniaDriver(baseURL, auth) {
 	    var params = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-	    var reqParams = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+	    var reqParams = arguments[3];
 
 	    _classCallCheck(this, XeniaDriver);
 
@@ -131,7 +131,10 @@ module.exports =
 
 	    // Initialize the query
 	    this._data = Object.assign({}, dataSchema, { params: [], queries: [] }, params.defaults, reqParams);
-	    this.addQuery(params);
+
+	    if (!reqParams) {
+	      this.addQuery(params);
+	    }
 
 	    return this;
 	  }
