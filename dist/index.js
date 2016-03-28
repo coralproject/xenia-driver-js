@@ -197,9 +197,13 @@ module.exports =
 
 	      if ('string' === typeof queryName) {
 	        this._commitQuery();
-	        return this._request.post('/exec', this._data);
+	        return this._request.post('/exec', this._data).then(function (res) {
+	          return res.data;
+	        });
 	      } else {
-	        return this._request.get('/exec/' + queryName, params);
+	        return this._request.get('/exec/' + queryName, params).then(function (res) {
+	          return res.data;
+	        });
 	      }
 	    }
 
@@ -214,7 +218,9 @@ module.exports =
 	        this._data.name = name;
 	      }
 
-	      return this._request.put('/query', this._data);
+	      return this._request.put('/query', this._data).then(function (res) {
+	        return res.data;
+	      });
 	    }
 
 	    /**

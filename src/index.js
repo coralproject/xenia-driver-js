@@ -120,8 +120,10 @@ class XeniaDriver {
     if ('string' === typeof queryName) {
       this._commitQuery()
       return this._request.post('/exec', this._data)
+        .then(res => res.data)
     } else {
       return this._request.get(`/exec/${queryName}`, params)
+        .then(res => res.data)
     }
   }
 
@@ -135,6 +137,7 @@ class XeniaDriver {
     }
 
     return this._request.put('/query', this._data)
+      .then(res => res.data)
   }
 
   /**
