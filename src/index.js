@@ -122,7 +122,7 @@ class XeniaDriver {
       return this._request.post('/exec', this._data)
         .then(res => res.data)
     } else {
-      return this._request.get(`/exec/${queryName}`, params)
+      return this._request.get(`/exec/${queryName}`, {params})
         .then(res => res.data)
     }
   }

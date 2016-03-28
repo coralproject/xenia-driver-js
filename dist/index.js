@@ -201,7 +201,7 @@ module.exports =
 	          return res.data;
 	        });
 	      } else {
-	        return this._request.get('/exec/' + queryName, params).then(function (res) {
+	        return this._request.get('/exec/' + queryName, { params: params }).then(function (res) {
 	          return res.data;
 	        });
 	      }
