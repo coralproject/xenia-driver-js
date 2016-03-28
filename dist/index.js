@@ -195,7 +195,7 @@ module.exports =
 	    value: function exec(queryName) {
 	      var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-	      if ('string' === typeof queryName) {
+	      if ('string' !== typeof queryName) {
 	        this._commitQuery();
 	        return this._request.post('/exec', this._data).then(function (res) {
 	          return res.data;

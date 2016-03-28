@@ -117,7 +117,7 @@ class XeniaDriver {
    */
 
   exec (queryName, params={}) {
-    if ('string' === typeof queryName) {
+    if ('string' !== typeof queryName) {
       this._commitQuery()
       return this._request.post('/exec', this._data)
         .then(res => res.data)
