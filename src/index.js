@@ -129,6 +129,7 @@ class XeniaDriver {
       // perform join match
       .then(data => {
         data.results.forEach((res, i) => {
+          if(!this._data.queries[i]) return
           const pendingJoin = this._data.queries[i]._pendingJoin
           if (pendingJoin) {
             res.Docs = res.Docs.map(doc => {
