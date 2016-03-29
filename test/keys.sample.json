@@ -1,4 +1,7 @@
 {
-  "username": "",
-  "password": ""
+  "auth": {
+    "username": "",
+    "password": ""
+  },
+  "baseURL: ""
 }

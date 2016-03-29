@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "mocha",
+    "coverage": "istanbul cover mocha",
     "start": "webpack --watch",
     "build": "webpack"
   },

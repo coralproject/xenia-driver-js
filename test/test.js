@@ -1,17 +1,18 @@
 
 require('babel-register')
 var xeniaDriver = require('../src')
-var auth = require('./keys.json')
+var keys = require('./keys.json')
 var assert = require('assert')
 
-const xenia = xeniaDriver('https://demo.coralproject.net/xenia_api/1.0', auth)
+var auth = keys.auth
+var xenia = xeniaDriver(keys.baseURL, auth)
 
 describe('Xenia Driver', function() {
 
    describe('Constructor', function() {
       it('should return a new Xenia Driver instance', function(){
-         const xen = xenia('https://demo.coralproject.net/xenia_api/1.0', auth)
-         assert(xen._baseURL === 'https://demo.coralproject.net/xenia_api/1.0')
+         const xen = xenia(keys.baseURL, auth)
+         assert(xen._baseURL === keys.baseURL)
          assert(xen._auth.username === auth.username && xen._auth.password === auth.password)
          assert('object' === typeof xen._request)
          assert('object' === typeof xen._data)
@@ -33,15 +34,16 @@ describe('Xenia Driver', function() {
    })
 
    describe('exec', function() {
-      it('should execute a query to xenia', function(done) {
-         xenia()
-           .sample(24)
-           .limit(15)
-           .skip(1)
-         .exec().then(res => {
-            assert(res.data.results.length)
-            done()
-         })
+    it('should execute a query to xenia', function(done) {
+      xenia()
+        .include(['name'])
+        .sample(24)
+        .limit(1)
+        .skip(1)
+        .exec().then(data => {
+          assert(data.results.length)
+          done()
+        }).catch(err => console.log(err))
       })
    })
 
