@@ -47,8 +47,8 @@
 	'use strict';
 
 	var XeniaDriver = __webpack_require__(1);
-	var keys = __webpack_require__(8);
-	var Plotly = __webpack_require__(2);
+	var keys = __webpack_require__(2);
+	var Plotly = __webpack_require__(3);
 
 	var xenia = XeniaDriver(keys.baseURL, keys.auth);
 
@@ -66,7 +66,7 @@
 	};
 
 	var joinCollections = function joinCollections() {
-	  return xenia().collection('comments').include(['body', 'asset_id']).limit(5).join('assets', '_id', 'asset_id').include(['section']).exec().then(function (res) {
+	  return xenia().collection('comments').include(['body', 'asset_id']).limit(5).join('assets', '_id', 'asset_id', 'asset').include(['section']).exec().then(function (res) {
 	    console.log(res.results);
 	  });
 	};
@@ -271,9 +271,11 @@
 				value: function _commitQuery() {
 					if (this._query) {
 						this._query.commands = this._commands;
+						this._query._pendingJoin = this._pendingJoin;
 						this._data.queries.push(this._query);
 					}
 					this._query = null;
+					this._pendingJoin = null;
 					return this;
 				}
 
@@ -311,6 +313,45 @@
 
 				/**
 	    * Executes the request
+	    * @api private
+	    * @param {string} query name - optional
+	    * @param {object} query parameters - optional
+	    */
+
+			}, {
+				key: '_execRequest',
+				value: function _execRequest() {
+					var method = arguments.length <= 0 || arguments[0] === undefined ? 'post' : arguments[0];
+
+					var _this = this;
+
+					var path = arguments.length <= 1 || arguments[1] === undefined ? '/exec' : arguments[1];
+					var data = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+					return this._request[method](path, data).then(function (res) {
+						return res.data;
+					})
+
+					// perform join match
+					.then(function (data) {
+						data.results.forEach(function (res, i) {
+							var pendingJoin = _this._data.queries[i]._pendingJoin;
+							if (pendingJoin) {
+								res.Docs = res.Docs.map(function (doc) {
+									var match = data.results[i + 1].Docs.find(function (nextDoc) {
+										return nextDoc[pendingJoin.field] === doc[pendingJoin.matchingField];
+									});
+									doc[pendingJoin.name] = match;
+									return doc;
+								});
+							}
+						});
+						return data;
+					});
+				}
+
+				/**
+	    * Executes the request
 	    * @param {string} query name - optional
 	    * @param {object} query parameters - optional
 	    */
@@ -322,13 +363,9 @@
 
 					if ('string' !== typeof queryName) {
 						this._commitQuery();
-						return this._request.post('/exec', this._data).then(function (res) {
-							return res.data;
-						});
+						return this._execRequest('post', '/exec', this._data);
 					} else {
-						return this._request.get('/exec/' + queryName, { params: params }).then(function (res) {
-							return res.data;
-						});
+						return this._execRequest('get', '/exec/' + queryName, { params: params });
 					}
 				}
 
@@ -339,9 +376,7 @@
 			}, {
 				key: 'getQueries',
 				value: function getQueries() {
-					return this._request.get('/query').then(function (res) {
-						return res.data;
-					});
+					return this._execRequest('get', '/query');
 				}
 
 				/**
@@ -564,6 +599,7 @@
 						matchingField = field;
 					}
 
+					this._pendingJoin = { field: field, matchingField: matchingField, name: name };
 					this._commands.push({ '$save': { '$map': name } });
 					this.addQuery().collection(collection).match(_defineProperty({}, field, { '$in': '#data.*:' + name + '.' + matchingField }));
 					return this;
@@ -1754,6 +1790,20 @@
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	module.exports = {
+	  "auth": {
+	    "username": "6d72e6dd-93d0-4413-9b4c-8546d4d3514e",
+	    "password": "PCyX/LTGZ8NtfV8eQyvNnJrvn1sihBOnAnS4ZFdcEvw="
+	  },
+	  "baseURL": "http://10.0.1.84:4000/1.0"
+	};
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var require;var require;/* WEBPACK VAR INJECTION */(function(global, Buffer) {/**
@@ -92369,10 +92419,10 @@
 
 	},{"../../plots/gl3d":410,"./attributes":549,"./calc":550,"./colorbar":551,"./convert":552,"./defaults":553}]},{},[12])(12)
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(3).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(4).Buffer))
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer, global) {/*!
@@ -92385,9 +92435,9 @@
 
 	'use strict'
 
-	var base64 = __webpack_require__(4)
-	var ieee754 = __webpack_require__(5)
-	var isArray = __webpack_require__(6)
+	var base64 = __webpack_require__(5)
+	var ieee754 = __webpack_require__(6)
+	var isArray = __webpack_require__(7)
 
 	exports.Buffer = Buffer
 	exports.SlowBuffer = SlowBuffer
@@ -93924,10 +93974,10 @@
 	  return i
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3).Buffer, (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4).Buffer, (function() { return this; }())))
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -94057,7 +94107,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -94147,7 +94197,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	var toString = {}.toString;
@@ -94156,21 +94206,6 @@
 	  return toString.call(arr) == '[object Array]';
 	};
 
-
-/***/ },
-/* 7 */,
-/* 8 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	module.exports = {
-	  "auth": {
-	    "username": "6d72e6dd-93d0-4413-9b4c-8546d4d3514e",
-	    "password": "PCyX/LTGZ8NtfV8eQyvNnJrvn1sihBOnAnS4ZFdcEvw="
-	  },
-	  "baseURL": "http://10.0.1.84:4000/1.0"
-	};
 
 /***/ }
 /******/ ]);

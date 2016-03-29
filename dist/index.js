@@ -149,9 +149,11 @@ module.exports =
 	    value: function _commitQuery() {
 	      if (this._query) {
 	        this._query.commands = this._commands;
+	        this._query._pendingJoin = this._pendingJoin;
 	        this._data.queries.push(this._query);
 	      }
 	      this._query = null;
+	      this._pendingJoin = null;
 	      return this;
 	    }
 
@@ -189,6 +191,45 @@ module.exports =
 
 	    /**
 	     * Executes the request
+	     * @api private
+	     * @param {string} query name - optional
+	     * @param {object} query parameters - optional
+	     */
+
+	  }, {
+	    key: '_execRequest',
+	    value: function _execRequest() {
+	      var method = arguments.length <= 0 || arguments[0] === undefined ? 'post' : arguments[0];
+
+	      var _this = this;
+
+	      var path = arguments.length <= 1 || arguments[1] === undefined ? '/exec' : arguments[1];
+	      var data = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+	      return this._request[method](path, data).then(function (res) {
+	        return res.data;
+	      })
+
+	      // perform join match
+	      .then(function (data) {
+	        data.results.forEach(function (res, i) {
+	          var pendingJoin = _this._data.queries[i]._pendingJoin;
+	          if (pendingJoin) {
+	            res.Docs = res.Docs.map(function (doc) {
+	              var match = data.results[i + 1].Docs.find(function (nextDoc) {
+	                return nextDoc[pendingJoin.field] === doc[pendingJoin.matchingField];
+	              });
+	              doc[pendingJoin.name] = match;
+	              return doc;
+	            });
+	          }
+	        });
+	        return data;
+	      });
+	    }
+
+	    /**
+	     * Executes the request
 	     * @param {string} query name - optional
 	     * @param {object} query parameters - optional
 	     */
@@ -200,13 +241,9 @@ module.exports =
 
 	      if ('string' !== typeof queryName) {
 	        this._commitQuery();
-	        return this._request.post('/exec', this._data).then(function (res) {
-	          return res.data;
-	        });
+	        return this._execRequest('post', '/exec', this._data);
 	      } else {
-	        return this._request.get('/exec/' + queryName, { params: params }).then(function (res) {
-	          return res.data;
-	        });
+	        return this._execRequest('get', '/exec/' + queryName, { params: params });
 	      }
 	    }
 
@@ -217,9 +254,7 @@ module.exports =
 	  }, {
 	    key: 'getQueries',
 	    value: function getQueries() {
-	      return this._request.get('/query').then(function (res) {
-	        return res.data;
-	      });
+	      return this._execRequest('get', '/query');
 	    }
 
 	    /**
@@ -442,6 +477,7 @@ module.exports =
 	        matchingField = field;
 	      }
 
+	      this._pendingJoin = { field: field, matchingField: matchingField, name: name };
 	      this._commands.push({ '$save': { '$map': name } });
 	      this.addQuery().collection(collection).match(_defineProperty({}, field, { '$in': '#data.*:' + name + '.' + matchingField }));
 	      return this;

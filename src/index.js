@@ -84,9 +84,11 @@ class XeniaDriver {
   _commitQuery () {
     if (this._query) {
       this._query.commands = this._commands
+      this._query._pendingJoin = this._pendingJoin
       this._data.queries.push(this._query)
     }
     this._query = null
+    this._pendingJoin = null
     return this
   }
 
@@ -108,11 +110,40 @@ class XeniaDriver {
    * Set the collection for the current query
    * @param {string} collection name
    */
+
   collection ( name = 'user_statistics' ) {
     this._query.collection = name
     return this
   }
 
+  /**
+   * Executes the request
+   * @api private
+   * @param {string} query name - optional
+   * @param {object} query parameters - optional
+   */
+  _execRequest (method = 'post', path = '/exec', data = {}) {
+    return this._request[method](path, data)
+      .then(res => res.data)
+
+      // perform join match
+      .then(data => {
+        data.results.forEach((res, i) => {
+          const pendingJoin = this._data.queries[i]._pendingJoin
+          if (pendingJoin) {
+            res.Docs = res.Docs.map(doc => {
+              const match = data.results[i + 1].Docs.find(nextDoc => 
+                nextDoc[pendingJoin.field] === doc[pendingJoin.matchingField]
+              )
+              doc[pendingJoin.name] = match
+              return doc
+            })
+          }
+        })
+        return data
+      })
+  }
+    
   /**
    * Executes the request
    * @param {string} query name - optional
@@ -122,11 +153,9 @@ class XeniaDriver {
   exec (queryName, params={}) {
     if ('string' !== typeof queryName) {
       this._commitQuery()
-      return this._request.post('/exec', this._data)
-        .then(res => res.data)
+      return this._execRequest('post', '/exec', this._data)
     } else {
-      return this._request.get(`/exec/${queryName}`, {params})
-        .then(res => res.data)
+      return this._execRequest('get', `/exec/${queryName}`, {params})
     }
   }
 
@@ -135,7 +164,7 @@ class XeniaDriver {
    */
 
   getQueries () {
-    return this._request.get('/query').then(res => res.data)
+    return this._execRequest('get', '/query')
   }
 
   /**
@@ -297,6 +326,7 @@ class XeniaDriver {
       matchingField = field
     }
 
+    this._pendingJoin = { field, matchingField, name }
     this._commands.push({ '$save': { '$map': name } })
     this.addQuery().collection(collection)
       .match({ [field]: { '$in': `#data.*:${name}.${matchingField}`} })

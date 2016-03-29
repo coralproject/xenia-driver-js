@@ -21,7 +21,7 @@ xenia()
   .collection('comments')
   .include(['body', 'asset_id'])
   .limit(5)
-  .join('assets', '_id', 'asset_id')
+  .join('assets', '_id', 'asset_id', 'asset')
   .include(['section'])
   .exec().then(res => {
     console.log(res.results)
