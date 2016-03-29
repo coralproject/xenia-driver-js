@@ -207,7 +207,9 @@ class XeniaDriver {
    */
 
   include ( fields = [] ) {
-    this._commands.push({ '$project': fields.map(field => ({[field]: true})) })
+    const obj = {}
+    fields.forEach(field => obj[field] = true)
+    this._commands.push({ '$project': obj })
     return this
   }
 
@@ -217,7 +219,9 @@ class XeniaDriver {
    */
 
   exclude ( fields = [] ) {
-    this._commands.push({ '$project': fields.map(field => ({[field]: false})) })
+    const obj = {}
+    fields.forEach(field => obj[field] = false)
+    this._commands.push({ '$project': obj })
     return this
   }
 

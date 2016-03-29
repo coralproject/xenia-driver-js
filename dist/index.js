@@ -317,9 +317,11 @@ module.exports =
 	    value: function include() {
 	      var fields = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
-	      this._commands.push({ '$project': fields.map(function (field) {
-	          return _defineProperty({}, field, true);
-	        }) });
+	      var obj = {};
+	      fields.forEach(function (field) {
+	        return obj[field] = true;
+	      });
+	      this._commands.push({ '$project': obj });
 	      return this;
 	    }
 
@@ -333,9 +335,11 @@ module.exports =
 	    value: function exclude() {
 	      var fields = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
-	      this._commands.push({ '$project': fields.map(function (field) {
-	          return _defineProperty({}, field, false);
-	        }) });
+	      var obj = {};
+	      fields.forEach(function (field) {
+	        return obj[field] = false;
+	      });
+	      this._commands.push({ '$project': obj });
 	      return this;
 	    }
 
