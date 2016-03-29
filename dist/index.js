@@ -427,6 +427,7 @@ module.exports =
 	     * from Xenia
 	     * @param {string} collection
 	     * @param {string} field - default: _id
+	     * @param {string} matching field - default: field
 	     * @param {sting} join parameter name - default: 'list'
 	     */
 
@@ -434,10 +435,15 @@ module.exports =
 	    key: 'join',
 	    value: function join(collection) {
 	      var field = arguments.length <= 1 || arguments[1] === undefined ? '_id' : arguments[1];
-	      var name = arguments.length <= 2 || arguments[2] === undefined ? 'list' : arguments[2];
+	      var matchingField = arguments[2];
+	      var name = arguments.length <= 3 || arguments[3] === undefined ? 'list' : arguments[3];
+
+	      if (!matchingField) {
+	        matchingField = field;
+	      }
 
 	      this._commands.push({ '$save': { '$map': name } });
-	      this.addQuery().collection(collection).match(_defineProperty({}, field, { '$in': '#data.*:' + name + '.' + field }));
+	      this.addQuery().collection(collection).match(_defineProperty({}, field, { '$in': '#data.*:' + name + '.' + matchingField }));
 	      return this;
 	    }
 	  }]);

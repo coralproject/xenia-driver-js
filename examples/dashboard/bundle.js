@@ -47,9 +47,10 @@
 	'use strict';
 
 	var XeniaDriver = __webpack_require__(1);
+	var keys = __webpack_require__(8);
 	var Plotly = __webpack_require__(2);
 
-	var xenia = XeniaDriver('http://10.0.1.84:4000/1.0', 'Basic NmQ3MmU2ZGQtOTNkMC00NDEzLTliNGMtODU0NmQ0ZDM1MTRlOlBDeVgvTFRHWjhOdGZWOGVReXZObkpydm4xc2loQk9uQW5TNFpGZGNFdnc9');
+	var xenia = XeniaDriver(keys.baseURL, keys.auth);
 
 	var topContributorsChart = function topContributorsChart() {
 	  return xenia().include(['name', 'stats.comments']).sort(['stats.comments', -1]).limit(20).exec().then(function (res) {
@@ -64,6 +65,12 @@
 	  });
 	};
 
+	var joinCollections = function joinCollections() {
+	  return xenia().collection('comments').include(['body', 'asset_id']).limit(5).join('assets', '_id', 'asset_id').include(['section']).exec().then(function (res) {
+	    console.log(res.results);
+	  });
+	};
+
 	var trolls = function trolls() {
 	  return xenia().include(['name', 'avatar', 'statistics.comments.all.ratios.SystemFlagged']).sort(['statistics.comments.all.ratios.SystemFlagged', -1]).limit(5).exec().then(function (res) {
 	    var html = res.results[0].Docs.map(function (_ref) {
@@ -75,6 +82,7 @@
 	  });
 	};
 
+	joinCollections();
 	topContributorsChart();
 	trolls();
 
@@ -541,6 +549,7 @@
 	    * from Xenia
 	    * @param {string} collection
 	    * @param {string} field - default: _id
+	    * @param {string} matching field - default: field
 	    * @param {sting} join parameter name - default: 'list'
 	    */
 
@@ -548,10 +557,15 @@
 				key: 'join',
 				value: function join(collection) {
 					var field = arguments.length <= 1 || arguments[1] === undefined ? '_id' : arguments[1];
-					var name = arguments.length <= 2 || arguments[2] === undefined ? 'list' : arguments[2];
+					var matchingField = arguments[2];
+					var name = arguments.length <= 3 || arguments[3] === undefined ? 'list' : arguments[3];
+
+					if (!matchingField) {
+						matchingField = field;
+					}
 
 					this._commands.push({ '$save': { '$map': name } });
-					this.addQuery().collection(collection).match(_defineProperty({}, field, { '$in': '#data.*:' + name + '.' + field }));
+					this.addQuery().collection(collection).match(_defineProperty({}, field, { '$in': '#data.*:' + name + '.' + matchingField }));
 					return this;
 				}
 			}]);
@@ -94142,6 +94156,21 @@
 	  return toString.call(arr) == '[object Array]';
 	};
 
+
+/***/ },
+/* 7 */,
+/* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	module.exports = {
+	  "auth": {
+	    "username": "6d72e6dd-93d0-4413-9b4c-8546d4d3514e",
+	    "password": "PCyX/LTGZ8NtfV8eQyvNnJrvn1sihBOnAnS4ZFdcEvw="
+	  },
+	  "baseURL": "http://10.0.1.84:4000/1.0"
+	};
 
 /***/ }
 /******/ ]);

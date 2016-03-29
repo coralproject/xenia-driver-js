@@ -288,13 +288,18 @@ class XeniaDriver {
    * from Xenia
    * @param {string} collection
    * @param {string} field - default: _id
+   * @param {string} matching field - default: field
    * @param {sting} join parameter name - default: 'list'
    */
 
-  join ( collection, field = '_id', name = 'list' ) {
+  join ( collection, field = '_id', matchingField, name = 'list' ) {
+    if ( !matchingField ) { 
+      matchingField = field
+    }
+
     this._commands.push({ '$save': { '$map': name } })
     this.addQuery().collection(collection)
-      .match({ [field]: { '$in': `#data.*:${name}.${field}`} })
+      .match({ [field]: { '$in': `#data.*:${name}.${matchingField}`} })
     return this
   }
 
