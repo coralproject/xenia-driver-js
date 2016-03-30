@@ -213,7 +213,7 @@ module.exports =
 	      // perform join match
 	      .then(function (data) {
 	        data.results.forEach(function (res, i) {
-	          if (!(_this._data && _this._data.queries[i])) return;
+	          if (!(_this._data.queries.length && _this._data.queries[i])) return;
 	          var pendingJoin = _this._data.queries[i]._pendingJoin;
 	          if (pendingJoin) {
 	            res.Docs = res.Docs.map(function (doc) {
