@@ -212,7 +212,7 @@ module.exports =
 
 	      // perform join match
 	      .then(function (data) {
-	        if (!data.results) return;
+	        if (!data.results) return data;
 	        data.results.forEach(function (res, i) {
 	          if (!_this._data.queries[i]) return;
 	          var pendingJoin = _this._data.queries[i]._pendingJoin;
