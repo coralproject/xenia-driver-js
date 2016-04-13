@@ -114,6 +114,18 @@ xenia()
   .saveQuery('first users').then(data => console.log(data))
 ```
 
+### deleteQuery(name)
+
+Delete a query
+
+- `[name]` (String) - query name
+
+```js
+xenia()
+  .deleteQuery('first users')
+  .then(data => console.log(data))
+```
+
 ### Xenia#limit(n)
 
 Limit the amount of retrieved documents

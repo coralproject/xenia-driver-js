@@ -287,6 +287,23 @@ module.exports =
 	    }
 
 	    /**
+	     * Delete a query from xenia
+	     * @param {String} name
+	     */
+
+	  }, {
+	    key: 'deleteQuery',
+	    value: function deleteQuery(name) {
+	      if (name) {
+	        this._data.name = name;
+	      }
+
+	      return this._request.delete('/query/' + name).then(function (res) {
+	        return res.data;
+	      });
+	    }
+
+	    /**
 	     * Limit the amount of retrieved documents
 	     * @param {number} limit - default: 20
 	     */
