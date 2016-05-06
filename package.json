@@ -2,7 +2,8 @@
   "name": "xenia-driver",
   "version": "0.0.2",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/node.js",
+  "node": "dist/browser.js",
   "scripts": {
     "test": "mocha",
     "start": "webpack --watch",
