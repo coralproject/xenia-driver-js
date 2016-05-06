@@ -5,13 +5,13 @@ module.exports = [
       filename: 'browser.js',
       path: './dist',
       libraryTarget: "commonjs2",
-      target: "browser"
     },
     module: {
       loaders: [
         { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
       ]
-    }
+    },
+    target: 'web'
   },
   {
     entry: './src/index.js',
@@ -19,11 +19,12 @@ module.exports = [
       filename: 'node.js',
       path: './dist',
       libraryTarget: "commonjs2",
-      target: "node"
     },
+    target: 'node',
     module: {
       loaders: [
-        { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
+        { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"},
+        { test: /\.json$/, loader: "json-loader"}
       ]
     }
   }

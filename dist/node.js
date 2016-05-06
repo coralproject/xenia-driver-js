@@ -530,11 +530,11 @@ module.exports =
 	var defaults = __webpack_require__(3);
 	var utils = __webpack_require__(4);
 	var dispatchRequest = __webpack_require__(5);
-	var InterceptorManager = __webpack_require__(14);
-	var isAbsoluteURL = __webpack_require__(15);
-	var combineURLs = __webpack_require__(16);
-	var bind = __webpack_require__(17);
-	var transformData = __webpack_require__(10);
+	var InterceptorManager = __webpack_require__(31);
+	var isAbsoluteURL = __webpack_require__(32);
+	var combineURLs = __webpack_require__(33);
+	var bind = __webpack_require__(34);
+	var transformData = __webpack_require__(9);
 
 	function Axios(defaultConfig) {
 	  this.defaults = utils.merge({}, defaultConfig);
@@ -617,7 +617,7 @@ module.exports =
 	axios.all = function all(promises) {
 	  return Promise.all(promises);
 	};
-	axios.spread = __webpack_require__(18);
+	axios.spread = __webpack_require__(35);
 
 	// Expose interceptors
 	axios.interceptors = defaultInstance.interceptors;
@@ -970,7 +970,7 @@ module.exports =
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	'use strict';
 
 	/**
 	 * Dispatch a request to the server using whichever adapter
@@ -989,10 +989,10 @@ module.exports =
 	        adapter = config.adapter;
 	      } else if (typeof XMLHttpRequest !== 'undefined') {
 	        // For browsers use XHR adapter
-	        adapter = __webpack_require__(7);
+	        adapter = __webpack_require__(6);
 	      } else if (typeof process !== 'undefined') {
 	        // For node use HTTP adapter
-	        adapter = __webpack_require__(7);
+	        adapter = __webpack_require__(13);
 	      }
 
 	      if (typeof adapter === 'function') {
@@ -1005,117 +1005,19 @@ module.exports =
 	};
 
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
 /* 6 */
-/***/ function(module, exports) {
-
-	// shim for using process in browser
-
-	var process = module.exports = {};
-	var queue = [];
-	var draining = false;
-	var currentQueue;
-	var queueIndex = -1;
-
-	function cleanUpNextTick() {
-	    draining = false;
-	    if (currentQueue.length) {
-	        queue = currentQueue.concat(queue);
-	    } else {
-	        queueIndex = -1;
-	    }
-	    if (queue.length) {
-	        drainQueue();
-	    }
-	}
-
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    var timeout = setTimeout(cleanUpNextTick);
-	    draining = true;
-
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        while (++queueIndex < len) {
-	            if (currentQueue) {
-	                currentQueue[queueIndex].run();
-	            }
-	        }
-	        queueIndex = -1;
-	        len = queue.length;
-	    }
-	    currentQueue = null;
-	    draining = false;
-	    clearTimeout(timeout);
-	}
-
-	process.nextTick = function (fun) {
-	    var args = new Array(arguments.length - 1);
-	    if (arguments.length > 1) {
-	        for (var i = 1; i < arguments.length; i++) {
-	            args[i - 1] = arguments[i];
-	        }
-	    }
-	    queue.push(new Item(fun, args));
-	    if (queue.length === 1 && !draining) {
-	        setTimeout(drainQueue, 0);
-	    }
-	};
-
-	// v8 likes predictible objects
-	function Item(fun, array) {
-	    this.fun = fun;
-	    this.array = array;
-	}
-	Item.prototype.run = function () {
-	    this.fun.apply(null, this.array);
-	};
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-
-	function noop() {}
-
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
-
-/***/ },
-/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var utils = __webpack_require__(4);
-	var buildURL = __webpack_require__(8);
-	var parseHeaders = __webpack_require__(9);
-	var transformData = __webpack_require__(10);
-	var isURLSameOrigin = __webpack_require__(11);
-	var btoa = window.btoa || __webpack_require__(12);
+	var buildURL = __webpack_require__(7);
+	var parseHeaders = __webpack_require__(8);
+	var transformData = __webpack_require__(9);
+	var isURLSameOrigin = __webpack_require__(10);
+	var btoa = window.btoa || __webpack_require__(11);
 
 	module.exports = function xhrAdapter(resolve, reject, config) {
 	  var requestData = config.data;
@@ -1190,7 +1092,7 @@ module.exports =
 	  // This is only done if running in a standard browser environment.
 	  // Specifically not if we're in a web worker, or react-native.
 	  if (utils.isStandardBrowserEnv()) {
-	    var cookies = __webpack_require__(13);
+	    var cookies = __webpack_require__(12);
 
 	    // Add xsrf header
 	    var xsrfValue = config.withCredentials || isURLSameOrigin(config.url) ?
@@ -1241,7 +1143,7 @@ module.exports =
 
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1314,7 +1216,7 @@ module.exports =
 
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1357,7 +1259,7 @@ module.exports =
 
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1383,7 +1285,7 @@ module.exports =
 
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1457,7 +1359,7 @@ module.exports =
 
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1499,7 +1401,7 @@ module.exports =
 
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1558,7 +1460,1076 @@ module.exports =
 
 
 /***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var utils = __webpack_require__(4);
+	var buildURL = __webpack_require__(7);
+	var transformData = __webpack_require__(9);
+	var http = __webpack_require__(14).http;
+	var https = __webpack_require__(14).https;
+	var url = __webpack_require__(16);
+	var zlib = __webpack_require__(28);
+	var pkg = __webpack_require__(29);
+	var Buffer = __webpack_require__(30).Buffer;
+
+	module.exports = function httpAdapter(resolve, reject, config) {
+	  var data = config.data;
+	  var headers = config.headers;
+	  var timer;
+	  var aborted = false;
+
+	  // Set User-Agent (required by some servers)
+	  // Only set header if it hasn't been set in config
+	  // See https://github.com/mzabriskie/axios/issues/69
+	  if (!headers['User-Agent'] && !headers['user-agent']) {
+	    headers['User-Agent'] = 'axios/' + pkg.version;
+	  }
+
+	  if (data) {
+	    if (utils.isArrayBuffer(data)) {
+	      data = new Buffer(new Uint8Array(data));
+	    } else if (utils.isString(data)) {
+	      data = new Buffer(data, 'utf-8');
+	    } else {
+	      return reject(new Error('Data after transformation must be a string or an ArrayBuffer'));
+	    }
+
+	    // Add Content-Length header if data exists
+	    headers['Content-Length'] = data.length;
+	  }
+
+	  // HTTP basic authentication
+	  var auth = undefined;
+	  if (config.auth) {
+	    var username = config.auth.username || '';
+	    var password = config.auth.password || '';
+	    auth = username + ':' + password;
+	  }
+
+	  // Parse url
+	  var parsed = url.parse(config.url);
+	  var options = {
+	    hostname: parsed.hostname,
+	    port: parsed.port,
+	    path: buildURL(parsed.path, config.params, config.paramsSerializer).replace(/^\?/, ''),
+	    method: config.method,
+	    headers: headers,
+	    agent: config.agent,
+	    auth: auth
+	  };
+
+	  // Create the request
+	  var transport = parsed.protocol === 'https:' ? https : http;
+	  var req = transport.request(options, function handleResponse(res) {
+	    if (aborted) return;
+
+	    // Response has been received so kill timer that handles request timeout
+	    clearTimeout(timer);
+	    timer = null;
+
+	    // uncompress the response body transparently if required
+	    var stream = res;
+	    switch (res.headers['content-encoding']) {
+	    /*eslint default-case:0*/
+	    case 'gzip':
+	    case 'compress':
+	    case 'deflate':
+	      // add the unzipper to the body stream processing pipeline
+	      stream = stream.pipe(zlib.createUnzip());
+
+	      // remove the content-encoding in order to not confuse downstream operations
+	      delete res.headers['content-encoding'];
+	      break;
+	    }
+
+	    var responseBuffer = [];
+	    stream.on('data', function handleStreamData(chunk) {
+	      responseBuffer.push(chunk);
+	    });
+
+	    stream.on('end', function handleStreamEnd() {
+	      var d = Buffer.concat(responseBuffer);
+	      if (config.responseType !== 'arraybuffer') {
+	        d = d.toString('utf8');
+	      }
+	      var response = {
+	        data: transformData(
+	          d,
+	          res.headers,
+	          config.transformResponse
+	        ),
+	        status: res.statusCode,
+	        statusText: res.statusMessage,
+	        headers: res.headers,
+	        config: config
+	      };
+
+	      // Resolve or reject the Promise based on the status
+	      (res.statusCode >= 200 && res.statusCode < 300 ?
+	        resolve :
+	        reject)(response);
+	    });
+	  });
+
+	  // Handle errors
+	  req.on('error', function handleRequestError(err) {
+	    if (aborted) return;
+	    reject(err);
+	  });
+
+	  // Handle request timeout
+	  if (config.timeout && !timer) {
+	    timer = setTimeout(function handleRequestTimeout() {
+	      var err = new Error('timeout of ' + config.timeout + 'ms exceeded');
+	      err.timeout = config.timeout;
+	      err.code = 'ECONNABORTED';
+	      req.abort();
+	      reject(err);
+	      aborted = true;
+	    }, config.timeout);
+	  }
+
+	  // Send the request
+	  req.end(data);
+	};
+
+
+/***/ },
 /* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(15)({
+	  'http': __webpack_require__(26),
+	  'https': __webpack_require__(27)
+	});
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var url = __webpack_require__(16);
+	var debug = __webpack_require__(17)('follow-redirects');
+	var assert = __webpack_require__(24);
+	var consume = __webpack_require__(25);
+
+	module.exports = function(_nativeProtocols) {
+	  var nativeProtocols = {};
+
+	  var publicApi = {
+	    maxRedirects: 5
+	  };
+
+	  for (var p in _nativeProtocols) {
+	    /* istanbul ignore else */
+	    if (_nativeProtocols.hasOwnProperty(p)) {
+	      // http://www.ietf.org/rfc/rfc2396.txt - Section 3.1
+	      assert(/^[A-Z][A-Z\+\-\.]*$/i.test(p), JSON.stringify(p) + ' is not a valid scheme name');
+	      generateWrapper(p, _nativeProtocols[p]);
+	    }
+	  }
+
+	  return publicApi;
+
+	  function execute(options) {
+	    var clientRequest;
+	    var fetchedUrls = [];
+
+	    return (clientRequest = cb());
+
+	    function cb(res) {
+	      // skip the redirection logic on the first call.
+	      if (res) {
+	        var fetchedUrl = url.format(options);
+	        fetchedUrls.unshift(fetchedUrl);
+
+	        if (!isRedirect(res)) {
+	          res.fetchedUrls = fetchedUrls;
+	          return options.userCallback(res);
+	        }
+
+	        // we are going to follow the redirect, but in node 0.10 we must first attach a data listener
+	        // to consume the stream and send the 'end' event
+	        consume(res);
+
+	        // need to use url.resolve() in case location is a relative URL
+	        var redirectUrl = url.resolve(fetchedUrl, res.headers.location);
+	        debug('redirecting to', redirectUrl);
+
+	        // clean all the properties related to the old url away, and copy from the redirect url
+	        wipeUrlProps(options);
+	        extend(options, url.parse(redirectUrl));
+	      }
+
+	      if (fetchedUrls.length > options.maxRedirects) {
+	        var err = new Error('Max redirects exceeded.');
+	        return forwardError(err);
+	      }
+
+	      options.nativeProtocol = nativeProtocols[options.protocol];
+	      options.defaultRequest = defaultMakeRequest;
+
+	      var req = (options.makeRequest || defaultMakeRequest)(options, cb, res);
+
+	      if (res) {
+	        req.on('error', forwardError);
+	      }
+	      return req;
+	    }
+
+	    function defaultMakeRequest(options, cb, res) {
+	      if (res) {
+	        // This is a redirect, so use only GET methods
+	        options.method = 'GET';
+	      }
+
+	      var req = options.nativeProtocol.request(options, cb);
+
+	      if (res) {
+	        // We leave the user to call `end` on the first request
+	        req.end();
+	      }
+
+	      return req;
+	    }
+
+	    // bubble errors that occur on the redirect back up to the initiating client request
+	    // object, otherwise they wind up killing the process.
+	    function forwardError (err) {
+	      clientRequest.emit('error', err);
+	    }
+	  }
+
+	  function generateWrapper (scheme, nativeProtocol) {
+	    var wrappedProtocol = scheme + ':';
+	    var H = function() {};
+	    H.prototype = nativeProtocols[wrappedProtocol] = nativeProtocol;
+	    H = new H();
+	    publicApi[scheme] = H;
+
+	    H.request = function(options, callback) {
+	      return execute(parseOptions(options, callback, wrappedProtocol));
+	    };
+
+	    // see https://github.com/joyent/node/blob/master/lib/http.js#L1623
+	    H.get = function(options, callback) {
+	      options = parseOptions(options, callback, wrappedProtocol);
+	      var req = execute(options);
+	      req.end();
+	      return req;
+	    };
+	  }
+
+	  // returns a safe copy of options (or a parsed url object if options was a string).
+	  // validates that the supplied callback is a function
+	  function parseOptions (options, callback, wrappedProtocol) {
+	    assert.equal(typeof callback, 'function', 'callback must be a function');
+	    if ('string' === typeof options) {
+	      options = url.parse(options);
+	      options.maxRedirects = publicApi.maxRedirects;
+	    } else {
+	      options = extend({
+	        maxRedirects: publicApi.maxRedirects,
+	        protocol: wrappedProtocol
+	      }, options);
+	    }
+	    assert.equal(options.protocol, wrappedProtocol, 'protocol mismatch');
+	    options.protocol = wrappedProtocol;
+	    options.userCallback = callback;
+
+	    debug('options', options);
+	    return options;
+	  }
+	};
+
+	// copies source's own properties onto destination and returns destination
+	function extend(destination, source) {
+	  for (var i in source) {
+	    if (source.hasOwnProperty(i)) {
+	      destination[i] = source[i];
+	    }
+	  }
+	  return destination;
+	}
+
+	// to redirect the result must have
+	// a statusCode between 300-399
+	// and a `Location` header
+	function isRedirect (res) {
+	  return (res.statusCode >= 300 && res.statusCode <= 399 &&
+	  'location' in res.headers);
+	}
+
+	// nulls all url related properties on the object.
+	// required on node <10
+	function wipeUrlProps(options) {
+	  for (var i = 0, l = urlProps.length; i < l; ++i) {
+	    options[urlProps[i]] = null;
+	  }
+	}
+	var urlProps = ['protocol', 'slashes', 'auth', 'host', 'port', 'hostname',
+	  'hash', 'search', 'query', 'pathname', 'path', 'href'];
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	module.exports = require("url");
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	/**
+	 * Module dependencies.
+	 */
+
+	var tty = __webpack_require__(18);
+	var util = __webpack_require__(19);
+
+	/**
+	 * This is the Node.js implementation of `debug()`.
+	 *
+	 * Expose `debug()` as the module.
+	 */
+
+	exports = module.exports = __webpack_require__(20);
+	exports.log = log;
+	exports.formatArgs = formatArgs;
+	exports.save = save;
+	exports.load = load;
+	exports.useColors = useColors;
+
+	/**
+	 * Colors.
+	 */
+
+	exports.colors = [6, 2, 3, 4, 5, 1];
+
+	/**
+	 * The file descriptor to write the `debug()` calls to.
+	 * Set the `DEBUG_FD` env variable to override with another value. i.e.:
+	 *
+	 *   $ DEBUG_FD=3 node script.js 3>debug.log
+	 */
+
+	var fd = parseInt(process.env.DEBUG_FD, 10) || 2;
+	var stream = 1 === fd ? process.stdout :
+	             2 === fd ? process.stderr :
+	             createWritableStdioStream(fd);
+
+	/**
+	 * Is stdout a TTY? Colored output is enabled when `true`.
+	 */
+
+	function useColors() {
+	  var debugColors = (process.env.DEBUG_COLORS || '').trim().toLowerCase();
+	  if (0 === debugColors.length) {
+	    return tty.isatty(fd);
+	  } else {
+	    return '0' !== debugColors
+	        && 'no' !== debugColors
+	        && 'false' !== debugColors
+	        && 'disabled' !== debugColors;
+	  }
+	}
+
+	/**
+	 * Map %o to `util.inspect()`, since Node doesn't do that out of the box.
+	 */
+
+	var inspect = (4 === util.inspect.length ?
+	  // node <= 0.8.x
+	  function (v, colors) {
+	    return util.inspect(v, void 0, void 0, colors);
+	  } :
+	  // node > 0.8.x
+	  function (v, colors) {
+	    return util.inspect(v, { colors: colors });
+	  }
+	);
+
+	exports.formatters.o = function(v) {
+	  return inspect(v, this.useColors)
+	    .replace(/\s*\n\s*/g, ' ');
+	};
+
+	/**
+	 * Adds ANSI color escape codes if enabled.
+	 *
+	 * @api public
+	 */
+
+	function formatArgs() {
+	  var args = arguments;
+	  var useColors = this.useColors;
+	  var name = this.namespace;
+
+	  if (useColors) {
+	    var c = this.color;
+
+	    args[0] = '  \u001b[3' + c + ';1m' + name + ' '
+	      + '\u001b[0m'
+	      + args[0] + '\u001b[3' + c + 'm'
+	      + ' +' + exports.humanize(this.diff) + '\u001b[0m';
+	  } else {
+	    args[0] = new Date().toUTCString()
+	      + ' ' + name + ' ' + args[0];
+	  }
+	  return args;
+	}
+
+	/**
+	 * Invokes `console.error()` with the specified arguments.
+	 */
+
+	function log() {
+	  return stream.write(util.format.apply(this, arguments) + '\n');
+	}
+
+	/**
+	 * Save `namespaces`.
+	 *
+	 * @param {String} namespaces
+	 * @api private
+	 */
+
+	function save(namespaces) {
+	  if (null == namespaces) {
+	    // If you set a process.env field to null or undefined, it gets cast to the
+	    // string 'null' or 'undefined'. Just delete instead.
+	    delete process.env.DEBUG;
+	  } else {
+	    process.env.DEBUG = namespaces;
+	  }
+	}
+
+	/**
+	 * Load `namespaces`.
+	 *
+	 * @return {String} returns the previously persisted debug modes
+	 * @api private
+	 */
+
+	function load() {
+	  return process.env.DEBUG;
+	}
+
+	/**
+	 * Copied from `node/src/node.js`.
+	 *
+	 * XXX: It's lame that node doesn't expose this API out-of-the-box. It also
+	 * relies on the undocumented `tty_wrap.guessHandleType()` which is also lame.
+	 */
+
+	function createWritableStdioStream (fd) {
+	  var stream;
+	  var tty_wrap = process.binding('tty_wrap');
+
+	  // Note stream._type is used for test-module-load-list.js
+
+	  switch (tty_wrap.guessHandleType(fd)) {
+	    case 'TTY':
+	      stream = new tty.WriteStream(fd);
+	      stream._type = 'tty';
+
+	      // Hack to have stream not keep the event loop alive.
+	      // See https://github.com/joyent/node/issues/1726
+	      if (stream._handle && stream._handle.unref) {
+	        stream._handle.unref();
+	      }
+	      break;
+
+	    case 'FILE':
+	      var fs = __webpack_require__(22);
+	      stream = new fs.SyncWriteStream(fd, { autoClose: false });
+	      stream._type = 'fs';
+	      break;
+
+	    case 'PIPE':
+	    case 'TCP':
+	      var net = __webpack_require__(23);
+	      stream = new net.Socket({
+	        fd: fd,
+	        readable: false,
+	        writable: true
+	      });
+
+	      // FIXME Should probably have an option in net.Socket to create a
+	      // stream from an existing fd which is writable only. But for now
+	      // we'll just add this hack and set the `readable` member to false.
+	      // Test: ./node test/fixtures/echo.js < /etc/passwd
+	      stream.readable = false;
+	      stream.read = null;
+	      stream._type = 'pipe';
+
+	      // FIXME Hack to have stream not keep the event loop alive.
+	      // See https://github.com/joyent/node/issues/1726
+	      if (stream._handle && stream._handle.unref) {
+	        stream._handle.unref();
+	      }
+	      break;
+
+	    default:
+	      // Probably an error on in uv_guess_handle()
+	      throw new Error('Implement me. Unknown stream file type!');
+	  }
+
+	  // For supporting legacy API we put the FD here.
+	  stream.fd = fd;
+
+	  stream._isStdio = true;
+
+	  return stream;
+	}
+
+	/**
+	 * Enable namespaces listed in `process.env.DEBUG` initially.
+	 */
+
+	exports.enable(load());
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = require("tty");
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	module.exports = require("util");
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	/**
+	 * This is the common logic for both the Node.js and web browser
+	 * implementations of `debug()`.
+	 *
+	 * Expose `debug()` as the module.
+	 */
+
+	exports = module.exports = debug;
+	exports.coerce = coerce;
+	exports.disable = disable;
+	exports.enable = enable;
+	exports.enabled = enabled;
+	exports.humanize = __webpack_require__(21);
+
+	/**
+	 * The currently active debug mode names, and names to skip.
+	 */
+
+	exports.names = [];
+	exports.skips = [];
+
+	/**
+	 * Map of special "%n" handling functions, for the debug "format" argument.
+	 *
+	 * Valid key names are a single, lowercased letter, i.e. "n".
+	 */
+
+	exports.formatters = {};
+
+	/**
+	 * Previously assigned color.
+	 */
+
+	var prevColor = 0;
+
+	/**
+	 * Previous log timestamp.
+	 */
+
+	var prevTime;
+
+	/**
+	 * Select a color.
+	 *
+	 * @return {Number}
+	 * @api private
+	 */
+
+	function selectColor() {
+	  return exports.colors[prevColor++ % exports.colors.length];
+	}
+
+	/**
+	 * Create a debugger with the given `namespace`.
+	 *
+	 * @param {String} namespace
+	 * @return {Function}
+	 * @api public
+	 */
+
+	function debug(namespace) {
+
+	  // define the `disabled` version
+	  function disabled() {
+	  }
+	  disabled.enabled = false;
+
+	  // define the `enabled` version
+	  function enabled() {
+
+	    var self = enabled;
+
+	    // set `diff` timestamp
+	    var curr = +new Date();
+	    var ms = curr - (prevTime || curr);
+	    self.diff = ms;
+	    self.prev = prevTime;
+	    self.curr = curr;
+	    prevTime = curr;
+
+	    // add the `color` if not set
+	    if (null == self.useColors) self.useColors = exports.useColors();
+	    if (null == self.color && self.useColors) self.color = selectColor();
+
+	    var args = Array.prototype.slice.call(arguments);
+
+	    args[0] = exports.coerce(args[0]);
+
+	    if ('string' !== typeof args[0]) {
+	      // anything else let's inspect with %o
+	      args = ['%o'].concat(args);
+	    }
+
+	    // apply any `formatters` transformations
+	    var index = 0;
+	    args[0] = args[0].replace(/%([a-z%])/g, function(match, format) {
+	      // if we encounter an escaped % then don't increase the array index
+	      if (match === '%%') return match;
+	      index++;
+	      var formatter = exports.formatters[format];
+	      if ('function' === typeof formatter) {
+	        var val = args[index];
+	        match = formatter.call(self, val);
+
+	        // now we need to remove `args[index]` since it's inlined in the `format`
+	        args.splice(index, 1);
+	        index--;
+	      }
+	      return match;
+	    });
+
+	    if ('function' === typeof exports.formatArgs) {
+	      args = exports.formatArgs.apply(self, args);
+	    }
+	    var logFn = enabled.log || exports.log || console.log.bind(console);
+	    logFn.apply(self, args);
+	  }
+	  enabled.enabled = true;
+
+	  var fn = exports.enabled(namespace) ? enabled : disabled;
+
+	  fn.namespace = namespace;
+
+	  return fn;
+	}
+
+	/**
+	 * Enables a debug mode by namespaces. This can include modes
+	 * separated by a colon and wildcards.
+	 *
+	 * @param {String} namespaces
+	 * @api public
+	 */
+
+	function enable(namespaces) {
+	  exports.save(namespaces);
+
+	  var split = (namespaces || '').split(/[\s,]+/);
+	  var len = split.length;
+
+	  for (var i = 0; i < len; i++) {
+	    if (!split[i]) continue; // ignore empty strings
+	    namespaces = split[i].replace(/\*/g, '.*?');
+	    if (namespaces[0] === '-') {
+	      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+	    } else {
+	      exports.names.push(new RegExp('^' + namespaces + '$'));
+	    }
+	  }
+	}
+
+	/**
+	 * Disable debug output.
+	 *
+	 * @api public
+	 */
+
+	function disable() {
+	  exports.enable('');
+	}
+
+	/**
+	 * Returns true if the given mode name is enabled, false otherwise.
+	 *
+	 * @param {String} name
+	 * @return {Boolean}
+	 * @api public
+	 */
+
+	function enabled(name) {
+	  var i, len;
+	  for (i = 0, len = exports.skips.length; i < len; i++) {
+	    if (exports.skips[i].test(name)) {
+	      return false;
+	    }
+	  }
+	  for (i = 0, len = exports.names.length; i < len; i++) {
+	    if (exports.names[i].test(name)) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+
+	/**
+	 * Coerce `val`.
+	 *
+	 * @param {Mixed} val
+	 * @return {Mixed}
+	 * @api private
+	 */
+
+	function coerce(val) {
+	  if (val instanceof Error) return val.stack || val.message;
+	  return val;
+	}
+
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	/**
+	 * Helpers.
+	 */
+
+	var s = 1000;
+	var m = s * 60;
+	var h = m * 60;
+	var d = h * 24;
+	var y = d * 365.25;
+
+	/**
+	 * Parse or format the given `val`.
+	 *
+	 * Options:
+	 *
+	 *  - `long` verbose formatting [false]
+	 *
+	 * @param {String|Number} val
+	 * @param {Object} options
+	 * @return {String|Number}
+	 * @api public
+	 */
+
+	module.exports = function(val, options){
+	  options = options || {};
+	  if ('string' == typeof val) return parse(val);
+	  return options.long
+	    ? long(val)
+	    : short(val);
+	};
+
+	/**
+	 * Parse the given `str` and return milliseconds.
+	 *
+	 * @param {String} str
+	 * @return {Number}
+	 * @api private
+	 */
+
+	function parse(str) {
+	  str = '' + str;
+	  if (str.length > 10000) return;
+	  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(str);
+	  if (!match) return;
+	  var n = parseFloat(match[1]);
+	  var type = (match[2] || 'ms').toLowerCase();
+	  switch (type) {
+	    case 'years':
+	    case 'year':
+	    case 'yrs':
+	    case 'yr':
+	    case 'y':
+	      return n * y;
+	    case 'days':
+	    case 'day':
+	    case 'd':
+	      return n * d;
+	    case 'hours':
+	    case 'hour':
+	    case 'hrs':
+	    case 'hr':
+	    case 'h':
+	      return n * h;
+	    case 'minutes':
+	    case 'minute':
+	    case 'mins':
+	    case 'min':
+	    case 'm':
+	      return n * m;
+	    case 'seconds':
+	    case 'second':
+	    case 'secs':
+	    case 'sec':
+	    case 's':
+	      return n * s;
+	    case 'milliseconds':
+	    case 'millisecond':
+	    case 'msecs':
+	    case 'msec':
+	    case 'ms':
+	      return n;
+	  }
+	}
+
+	/**
+	 * Short format for `ms`.
+	 *
+	 * @param {Number} ms
+	 * @return {String}
+	 * @api private
+	 */
+
+	function short(ms) {
+	  if (ms >= d) return Math.round(ms / d) + 'd';
+	  if (ms >= h) return Math.round(ms / h) + 'h';
+	  if (ms >= m) return Math.round(ms / m) + 'm';
+	  if (ms >= s) return Math.round(ms / s) + 's';
+	  return ms + 'ms';
+	}
+
+	/**
+	 * Long format for `ms`.
+	 *
+	 * @param {Number} ms
+	 * @return {String}
+	 * @api private
+	 */
+
+	function long(ms) {
+	  return plural(ms, d, 'day')
+	    || plural(ms, h, 'hour')
+	    || plural(ms, m, 'minute')
+	    || plural(ms, s, 'second')
+	    || ms + ' ms';
+	}
+
+	/**
+	 * Pluralization helper.
+	 */
+
+	function plural(ms, n, name) {
+	  if (ms < n) return;
+	  if (ms < n * 1.5) return Math.floor(ms / n) + ' ' + name;
+	  return Math.ceil(ms / n) + ' ' + name + 's';
+	}
+
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	module.exports = require("fs");
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	module.exports = require("net");
+
+/***/ },
+/* 24 */
+/***/ function(module, exports) {
+
+	module.exports = require("assert");
+
+/***/ },
+/* 25 */
+/***/ function(module, exports) {
+
+	module.exports = function(stream) {
+	    if (stream.readable && typeof stream.resume === 'function') {
+	        var state = stream._readableState;
+	        if (!state || state.pipesCount === 0) {
+	            // Either a classic stream or streams2 that's not piped to another destination
+	            try {
+	                stream.resume();
+	            } catch (err) {
+	                console.error("Got error: " + err);
+	                // If we can't, it's not worth dying over
+	            }
+	        }
+	    }
+	};
+
+
+/***/ },
+/* 26 */
+/***/ function(module, exports) {
+
+	module.exports = require("http");
+
+/***/ },
+/* 27 */
+/***/ function(module, exports) {
+
+	module.exports = require("https");
+
+/***/ },
+/* 28 */
+/***/ function(module, exports) {
+
+	module.exports = require("zlib");
+
+/***/ },
+/* 29 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		"_args": [
+			[
+				"axios@^0.9.1",
+				"/Users/dan/Projects/dacoral/xenia-driver"
+			]
+		],
+		"_from": "axios@>=0.9.1 <0.10.0",
+		"_id": "axios@0.9.1",
+		"_inCache": true,
+		"_installable": true,
+		"_location": "/axios",
+		"_nodeVersion": "3.3.1",
+		"_npmUser": {
+			"email": "mzabriskie@gmail.com",
+			"name": "mzabriskie"
+		},
+		"_npmVersion": "2.14.3",
+		"_phantomChildren": {},
+		"_requested": {
+			"name": "axios",
+			"raw": "axios@^0.9.1",
+			"rawSpec": "^0.9.1",
+			"scope": null,
+			"spec": ">=0.9.1 <0.10.0",
+			"type": "range"
+		},
+		"_requiredBy": [
+			"/"
+		],
+		"_resolved": "http://registry.npmjs.org/axios/-/axios-0.9.1.tgz",
+		"_shasum": "95608b16447ee29b033589854c3fc7ee2c06bf6e",
+		"_shrinkwrap": null,
+		"_spec": "axios@^0.9.1",
+		"_where": "/Users/dan/Projects/dacoral/xenia-driver",
+		"author": {
+			"name": "Matt Zabriskie"
+		},
+		"browser": {
+			"./lib/adapters/http.js": "./lib/adapters/xhr.js"
+		},
+		"bugs": {
+			"url": "https://github.com/mzabriskie/axios/issues"
+		},
+		"dependencies": {
+			"follow-redirects": "0.0.7"
+		},
+		"description": "Promise based HTTP client for the browser and node.js",
+		"devDependencies": {
+			"coveralls": "2.11.6",
+			"es6-promise": "3.0.2",
+			"grunt": "0.4.5",
+			"grunt-banner": "0.6.0",
+			"grunt-cli": "0.1.13",
+			"grunt-contrib-clean": "0.7.0",
+			"grunt-contrib-nodeunit": "0.4.1",
+			"grunt-contrib-watch": "0.6.1",
+			"grunt-eslint": "17.3.1",
+			"grunt-karma": "0.12.1",
+			"grunt-ts": "5.3.2",
+			"grunt-update-json": "0.2.2",
+			"grunt-webpack": "1.0.11",
+			"istanbul-instrumenter-loader": "^0.1.3",
+			"jasmine-core": "2.4.1",
+			"karma": "0.13.19",
+			"karma-coverage": "0.5.3",
+			"karma-jasmine": "0.3.6",
+			"karma-jasmine-ajax": "0.1.13",
+			"karma-phantomjs-launcher": "0.2.3",
+			"karma-sinon": "1.0.4",
+			"karma-sourcemap-loader": "0.3.7",
+			"karma-webpack": "1.7.0",
+			"load-grunt-tasks": "3.4.0",
+			"minimist": "1.2.0",
+			"phantomjs": "1.9.19",
+			"webpack": "1.12.11",
+			"webpack-dev-server": "1.14.1"
+		},
+		"directories": {},
+		"dist": {
+			"shasum": "95608b16447ee29b033589854c3fc7ee2c06bf6e",
+			"tarball": "https://registry.npmjs.org/axios/-/axios-0.9.1.tgz"
+		},
+		"gitHead": "5176623d6c70e9d66c17f7867703a8e9990554bd",
+		"homepage": "https://github.com/mzabriskie/axios",
+		"keywords": [
+			"ajax",
+			"http",
+			"node",
+			"promise",
+			"xhr"
+		],
+		"license": "MIT",
+		"main": "index.js",
+		"maintainers": [
+			{
+				"name": "mzabriskie",
+				"email": "mzabriskie@gmail.com"
+			}
+		],
+		"name": "axios",
+		"optionalDependencies": {},
+		"readme": "ERROR: No README data found!",
+		"repository": {
+			"type": "git",
+			"url": "git+https://github.com/mzabriskie/axios.git"
+		},
+		"scripts": {
+			"build": "grunt build",
+			"coveralls": "cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+			"examples": "node ./examples/server.js",
+			"start": "node ./sandbox/server.js",
+			"test": "grunt test"
+		},
+		"typescript": {
+			"definition": "./axios.d.ts"
+		},
+		"version": "0.9.1"
+	};
+
+/***/ },
+/* 30 */
+/***/ function(module, exports) {
+
+	module.exports = require("buffer");
+
+/***/ },
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1616,7 +2587,7 @@ module.exports =
 
 
 /***/ },
-/* 15 */
+/* 32 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1636,7 +2607,7 @@ module.exports =
 
 
 /***/ },
-/* 16 */
+/* 33 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1654,7 +2625,7 @@ module.exports =
 
 
 /***/ },
-/* 17 */
+/* 34 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1671,7 +2642,7 @@ module.exports =
 
 
 /***/ },
-/* 18 */
+/* 35 */
 /***/ function(module, exports) {
 
 	'use strict';
