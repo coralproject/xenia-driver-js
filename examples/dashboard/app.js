@@ -1,4 +1,4 @@
-var XeniaDriver = require('../../dist')
+var XeniaDriver = require('../../')
 var keys = require('./keys')
 var Plotly = require('plotly.js')
 

@@ -334,7 +334,9 @@
 
 					// perform join match
 					.then(function (data) {
+						if (!data.results) return data;
 						data.results.forEach(function (res, i) {
+							if (!_this._data.queries[i]) return;
 							var pendingJoin = _this._data.queries[i]._pendingJoin;
 							if (pendingJoin) {
 								res.Docs = res.Docs.map(function (doc) {
@@ -387,9 +389,7 @@
 			}, {
 				key: 'getQuery',
 				value: function getQuery(name) {
-					return this._request.get('/query/' + name).then(function (res) {
-						return res.data;
-					});
+					return this._execRequest('get', '/query/' + name);
 				}
 
 				/**
@@ -404,6 +404,23 @@
 					}
 
 					return this._request.put('/query', this._data).then(function (res) {
+						return res.data;
+					});
+				}
+
+				/**
+	    * Delete a query from xenia
+	    * @param {String} name
+	    */
+
+			}, {
+				key: 'deleteQuery',
+				value: function deleteQuery(name) {
+					if (name) {
+						this._data.name = name;
+					}
+
+					return this._request.delete('/query/' + name).then(function (res) {
 						return res.data;
 					});
 				}
