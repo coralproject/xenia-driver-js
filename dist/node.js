@@ -281,6 +281,8 @@ module.exports =
 	        this._data.name = name;
 	      }
 
+	      this._commitQuery();
+
 	      return this._request.put('/query', this._data).then(function (res) {
 	        return res.data;
 	      });
