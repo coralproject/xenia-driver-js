@@ -187,6 +187,8 @@ class XeniaDriver {
       this._data.name = name
     }
 
+    this._commitQuery()
+
     return this._request.put('/query', this._data)
       .then(res => res.data)
   }
